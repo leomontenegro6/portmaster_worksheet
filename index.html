@@ -5,9 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Game Database</title>
     <!-- Firebase App (the core Firebase SDK) -->
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
-    <!-- Firestore (Firebase database) -->
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js"></script>
+	<!-- Firebase App (the core Firebase SDK) -->
+	<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+
+	<!-- Firestore (Firebase database) -->
+	<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
 </head>
 <body>
     <h1>Game Database Entry</h1>
@@ -33,16 +36,18 @@
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             // Initialize Firebase
-            const firebaseConfig = {
-                apiKey: "AIzaSyDaZcun82L8Y9ygM4YftjnVktfHR_RYa5k",
-                authDomain: "portmaster-worksheet.firebaseapp.com",
-                projectId: "portmaster-worksheet",
-                storageBucket: "portmaster-worksheet.appspot.com",
-                messagingSenderId: "446872253270",
-                appId: "1:446872253270:web:26346a4a16ce4878279cf7"
-            };
-            const app = firebase.initializeApp(firebaseConfig);
-            const db = firebase.firestore(app);
+			const firebaseConfig = {
+				apiKey: "AIzaSyDaZcun82L8Y9ygM4YftjnVktfHR_RYa5k",
+				authDomain: "portmaster-worksheet.firebaseapp.com",
+				projectId: "portmaster-worksheet",
+				storageBucket: "portmaster-worksheet.appspot.com",
+				messagingSenderId: "446872253270",
+				appId: "1:446872253270:web:26346a4a16ce4878279cf7"
+			};
+
+			// Initialize Firebase
+			firebase.initializeApp(firebaseConfig);
+			const db = firebase.firestore();
 
             // Fetch existing games from Firebase and display
             function fetchGames() {
