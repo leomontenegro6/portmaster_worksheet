@@ -1,11 +1,10 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PortMaster Database</title>
-    
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <!-- DataTables CSS -->
@@ -20,165 +19,198 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <!-- Firestore (Firebase database) -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <style>
+        .game-entry {
+            border: 1px solid #e0e0e0;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+    </style>
 </head>
+
 <body>
+    <!-- Top bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light" style="padding: 0.5rem 1rem;">
+        <a class="navbar-brand" href="#">PortMaster Database</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav mr-auto" style="flex-wrap: nowrap;">
+                <li class="nav-item" style="margin-right: 15px;">
+                    <a class="nav-link" href="#newGameEntry">New Game Entry</a>
+                </li>
+                <li class="nav-item" style="margin-right: 15px;">
+                    <a class="nav-link" href="#database">Database</a>
+                </li>
+            </ul>
+            <span id="gameCount" class="navbar-text mr-3">
+                0 Games
+            </span>
+        </div>
+    </nav>
 
-<!-- Top bar -->
-<nav class="navbar navbar-expand-lg navbar-light bg-light" style="padding: 0.5rem 1rem;">
-  <a class="navbar-brand" href="#">PortMaster Database</a>
-  <div class="collapse navbar-collapse">
-    <ul class="navbar-nav mr-auto" style="flex-wrap: nowrap;">
-      <li class="nav-item" style="margin-right: 15px;">
-        <a class="nav-link" href="#newGameEntry">New Game Entry</a>
-      </li>
-      <li class="nav-item" style="margin-right: 15px;">
-        <a class="nav-link" href="#database">Database</a>
-      </li>
-    </ul>
-    <span id="gameCount" class="navbar-text mr-3">
-      0 Games
-    </span>
-    
-  </div>
-</nav>
+    <!-- Content below the top bar -->
+    <div class="container mt-4">
+        <!-- Game Entry Section -->
+        <div id="newGameEntry" class="game-entry">
+            <h3>Add New Game</h3>
+            <form id="gameForm" class="form-inline">
+                <div class="form-group mr-2">
+                    <label for="gameName" class="mr-2">Game Name:</label>
+                    <input type="text" class="form-control" id="gameName" required>
+                </div>
+                <div class="form-group mr-2">
+                    <label for="gameURL" class="mr-2">Game URL:</label>
+                    <input type="url" class="form-control" id="gameURL" required>
+                </div>
+                <div class="form-group">
+                    <label for="gameComments" class="mr-2">Comments:</label>
+                    <textarea class="form-control" id="gameComments"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary ml-2">Add Game</button>
+            </form>
+        </div>
 
-<!-- Content below the top bar -->
-<div class="container mt-4">
-  <div id="newGameEntry">
-    
-<form id="gameForm">
-    <label for="gameName">Game Name:</label>
-    <input type="text" id="gameName" required><br><br>
-    <label for="gameURL">Game URL:</label>
-    <input type="url" id="gameURL" required><br><br>
-    <label for="gameComments">Comments:</label>
-    <textarea id="gameComments"></textarea><br><br>
-    <input type="submit" value="Add Game">
-</form>
+        <!-- Database Table -->
+        <div id="database" class="mt-4">
+            <table id="gameTable" class="display">
+                <thead>
+                    <tr>
+                        <th>Game Name</th>
+                        <th>URL</th>
+                        <th>Comments</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Game data from Firebase will be populated here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-  </div>
-  
-  <div id="database" class="mt-4">
-    <table id="gameTable" class="display">
-      <thead>
-        <tr>
-          <th>Game Name</th>
-          <th>URL</th>
-          <th>Comments</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Game data from Firebase will be populated here -->
-      </tbody>
-    </table>
-  </div>
-</div>
+    <script>
+        // Firebase configuration
+		const firebaseConfig = {
+			apiKey: "AIzaSyDaZcun82L8Y9ygM4YftjnVktfHR_RYa5k",
+			authDomain: "portmaster-worksheet.firebaseapp.com",
+			projectId: "portmaster-worksheet",
+			storageBucket: "portmaster-worksheet.appspot.com",
+			messagingSenderId: "446872253270",
+			appId: "1:446872253270:web:26346a4a16ce4878279cf7"
+		};
 
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
 
+        const gameForm = document.getElementById("gameForm");
+        const gameName = document.getElementById("gameName");
+        const gameURL = document.getElementById("gameURL");
+        const gameComments = document.getElementById("gameComments");
+        const gameCount = document.getElementById("gameCount");
+        const gameTableBody = document.getElementById("gameTable").getElementsByTagName("tbody")[0];
 
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    // ... [existing initialization code will be retained]
-
-    // Function to check for duplicate game entries based on name or URL
-    async function isDuplicate(gameName, gameURL) {
-        const nameQuery = await db.collection("games").where("name", "==", gameName).get();
-        const urlQuery = await db.collection("games").where("url", "==", gameURL).get();
-        return !nameQuery.empty || !urlQuery.empty;
-    }
-
-    // ... [rest of the Firebase script, with modifications for points 6 to 9]
-
-    // Extend the addGameToTable function to include status and delete button
-    function addGameToTable(docId, name, url, comments, status) {
-        const gameTable = $('#gameTable').DataTable();
-        gameTable.row.add([
-            name, 
-            url, 
-            '<span contenteditable="true">' + comments + '</span>', 
-            '<select><option value="Done">Done</option><option value="WIP">WIP</option><option value="Missing Requirements">Missing Requirements</option></select>',
-            '<button onclick="deleteGame('' + docId + '')">Delete</button>'
-        ]).draw();
-    }
-
-    // Function to delete game from Firebase
-    function deleteGame(docId) {
-        db.collection("games").doc(docId).delete().then(() => {
-            // Refresh the game list
-            fetchGames();
-        }).catch((error) => {
-            console.error("Error deleting document: ", error);
-        });
-    }
-
-    // ... [rest of the Firebase script, with modifications]
-
-});
-</script>
-
-    // Firebase configuration and initialization
-    const firebaseConfig = {
-        apiKey: "AIzaSyDaZcun82L8Y9ygM4YftjnVktfHR_RYa5k",
-        authDomain: "portmaster-worksheet.firebaseapp.com",
-        projectId: "portmaster-worksheet",
-        storageBucket: "portmaster-worksheet.appspot.com",
-        messagingSenderId: "446872253270",
-        appId: "1:446872253270:web:26346a4a16ce4878279cf7"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-
-    // Function to add a game to the DataTable
-    function addGameToTable(name, url, comments) {
-        const gameTable = $('#gameTable').DataTable({ 'pageLength': 50 });
-        gameTable.row.add([name, url, comments]).draw();
-    }
-
-    // Fetch existing games from Firebase on page load
-    function fetchGames() {
-        db.collection("games").get().then((querySnapshot) => {
-            querySnapshot.forEach((doc) => {
-                const gameData = doc.data();
-                addGameToTable(gameData.name, gameData.url, gameData.comments);
+        // Initialize the DataTable and set default visible entries to 50
+        $(document).ready(function() {
+            $('#gameTable').DataTable({
+                pageLength: 50
             });
-            // Update game count
-            document.getElementById('gameCount').textContent = querySnapshot.size + " Games";
         });
-    }
 
-    // Add game details to Firebase on form submission
-    document.getElementById('gameForm').addEventListener('submit', function(e) {
-        e.preventDefault();
+        function fetchGames() {
+            db.collection("games").get().then((querySnapshot) => {
+                let games = [];
+                querySnapshot.forEach((doc) => {
+                    games.push({
+                        ...doc.data(),
+                        id: doc.id
+                    });
+                });
+                populateGameTable(games);
+            });
+        }
 
-        var gameName = document.getElementById('gameName').value;
-        var gameURL = document.getElementById('gameURL').value;
-        var gameComments = document.getElementById('gameComments').value;
+        function populateGameTable(games) {
+            games.forEach(game => {
+                let row = gameTableBody.insertRow();
+                let nameCell = row.insertCell(0);
+                let urlCell = row.insertCell(1);
+                let commentCell = row.insertCell(2);
+                let statusCell = row.insertCell(3);
+                let actionCell = row.insertCell(4);
 
-        // Add a new document to the "games" collection
-        db.collection("games").add({
-            name: gameName,
-            url: gameURL,
-            comments: gameComments
-        })
-        .then(function() {
-            // Clear the form
-            document.getElementById('gameForm').reset();
-            // Add game to the DataTable
-            addGameToTable(gameName, gameURL, gameComments);
-            // Update game count
-            const currentCount = parseInt(document.getElementById('gameCount').textContent.split(" ")[0]);
-            document.getElementById('gameCount').textContent = (currentCount + 1) + " Games";
-        })
-        .catch(function(error) {
-            console.error("Error writing document: ", error);
+                nameCell.textContent = game.name;
+                urlCell.textContent = game.url;
+                commentCell.contentEditable = "true";
+                commentCell.textContent = game.comment;
+                // Dropdown for status
+                let dropdown = document.createElement("select");
+                ["Done", "WIP", "Missing Requirements"].forEach(status => {
+                    let option = document.createElement("option");
+                    option.value = status;
+                    option.textContent = status;
+                    if (status === game.status) {
+                        option.selected = true;
+                    }
+                    dropdown.appendChild(option);
+                });
+                statusCell.appendChild(dropdown);
+                // Delete button
+                let deleteButton = document.createElement("button");
+                deleteButton.textContent = "Delete";
+                deleteButton.onclick = function() {
+                    deleteGame(game.id, row);
+                };
+                actionCell.appendChild(deleteButton);
+
+                gameCount.textContent = `${games.length} Games`;
+            });
+        }
+
+        function deleteGame(id, row) {
+            db.collection("games").doc(id).delete().then(() => {
+                gameTableBody.deleteRow(row.rowIndex - 1);
+            });
+        }
+
+        gameForm.addEventListener("submit", function(e) {
+            e.preventDefault();
+
+            let gameData = {
+                name: gameName.value,
+                url: gameURL.value,
+                comment: gameComments.value
+            };
+
+            // Check for duplicates
+            db.collection("games").where("name", "==", gameData.name).get().then((querySnapshot) => {
+                if (!querySnapshot.empty) {
+                    alert("A game with this name already exists.");
+                    return;
+                } else {
+                    db.collection("games").where("url", "==", gameData.url).get().then((querySnapshot) => {
+                        if (!querySnapshot.empty) {
+                            alert("A game with this URL already exists.");
+                            return;
+                        } else {
+                            db.collection("games").add(gameData).then(() => {
+                                gameName.value = "";
+                                gameURL.value = "";
+                                gameComments.value = "";
+                                // Refetch games after adding to display the latest data
+                                fetchGames();
+                            });
+                        }
+                    });
+                }
+            });
         });
-    });
 
-    // Fetch games on initial page load
-    fetchGames();
-});
-</script>
-
+        // Fetch games when the page loads
+        fetchGames();
+    </script>
 
 </body>
+
 </html>
