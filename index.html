@@ -95,6 +95,8 @@
     <!-- DataTables JS -->
     <script type="text/javascript" src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/1.13.5/js/dataTables.bootstrap5.min.js"></script>
+    <!-- Bootbox.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/6.0.0/bootbox.min.js" integrity="sha512-oVbWSv2O4y1UzvExJMHaHcaib4wsBMS5tEP3/YkMP6GmkwRJAa79Jwsv+Y/w7w2Vb/98/Xhvck10LyJweB8Jsw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <!-- Firebase App (the core Firebase SDK) -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <!-- Firestore (Firebase database) -->
@@ -188,7 +190,7 @@
                 let comment = game.comment ?? game.comments;
 
                 // Dropdown for status
-                let $dropdown = $('<select />').addClass('form-select form-select-sm');
+                let $dropdown = $('<select />').addClass('form-select form-select-sm status');
                 ["Done", "WIP", "Missing Requirements"].forEach(status => {
                     let $option = $('<option />').attr( 'value', status).html(status);
                     if (status === game.status) {
@@ -207,14 +209,53 @@
                     $dropdown[0].outerHTML,
                     $deleteButton[0].outerHTML,
                 ]).draw().node();
+                var $rowNode = $(rowNode);
 
-                // Allowing for the Comments column (third one) to be editable.
-                $(rowNode).children('td').eq(1).attr('contenteditable', 'true');
+                // Allowing for the Comments column (third one) to be editable,
+                // where each change sends the new description to the Firebase API.
+                // The data is sent only 1 second after user finishes typing, to avoid API flooding.
+                let commentsTimeout;
+                $rowNode.children('td').eq(1).attr('contenteditable', 'true').on('input', function(e) {
+                    var editedComments = $(this).html();
+                    
+                    if (commentsTimeout) clearTimeout(commentsTimeout);
+                    commentsTimeout = setTimeout(function() {
+                        console.log(game.id);
+                        console.log(editedComments);
+                        console.log('Send API call to edit comments on this game ID');
+                    }, 1000);
+                });
+
+                // Allows for Status to be edited, where the change is sent to the Firebase API.
+                $rowNode.find('select.status').on('change', function() {
+                    var newStatus = $(this).val();
+                    console.log(game.id);
+                    console.log(newStatus);
+                    console.log('Send API call to edit status on this game ID');
+                });
 
                 // Adding onclick event to the Delete button.
-                $(rowNode).find('button.delete').on('click', function() {
-                    const rowNumber = $(rowNode).index();
-                    deleteGame(game.id, rowNumber);
+                $rowNode.find('button.delete').on('click', function() {
+                    bootbox.confirm({
+                        title: 'Confirmation',
+                        message: 'Are you sure you want to delete this record?',
+                        buttons: {
+                            confirm: {
+                                label: 'Yes',
+                                className: 'btn-danger'
+                            },
+                            cancel: {
+                                label: 'No',
+                                className: 'btn-secondary'
+                            }
+                        },
+                        callback: function (result) {
+                            if (result) {
+                                const rowNumber = $(rowNode).index();
+                                deleteGame(game.id, rowNumber);
+                            }
+                        }
+                    });
                 });
             });
 
