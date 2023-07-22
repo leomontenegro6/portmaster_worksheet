@@ -6,80 +6,76 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PortMaster Database</title>
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" integrity="sha512-t4GWSVZO1eC8BM339Xd7Uphw5s17a86tIZIj8qRxhnKub6WoyhnrxeCIMeAqBPgdZGlCcG2PrZjMc+Wr78+5Xg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Bootstrap Icons CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <!-- DataTables CSS -->
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.css">
-    <!-- jQuery library -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <!-- Bootstrap JS -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <!-- DataTables JS -->
-    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.js"></script>
-    <!-- Firebase App (the core Firebase SDK) -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <!-- Firestore (Firebase database) -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-    <style>
-        .game-entry {
-            border: 1px solid #e0e0e0;
-            padding: 20px;
-            margin-bottom: 20px;
-            border-radius: 5px;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.5/css/dataTables.bootstrap5.min.css">
 </head>
 
 <body>
     <!-- Top bar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light" style="padding: 0.5rem 1rem;">
-        <a class="navbar-brand" href="#">PortMaster Database</a>
-        <div class="collapse navbar-collapse">
-            <ul class="navbar-nav mr-auto" style="flex-wrap: nowrap;">
-                <li class="nav-item" style="margin-right: 15px;">
-                    <a class="nav-link" href="#newGameEntry">New Game Entry</a>
-                </li>
-                <li class="nav-item" style="margin-right: 15px;">
-                    <a class="nav-link" href="#database">Database</a>
-                </li>
-            </ul>
-            <span id="gameCount" class="navbar-text mr-3">
-                0 Games
-            </span>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">PortMaster Database</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#newGameEntry">New Game Entry</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#database">Database</a>
+                    </li>
+                </ul>
+                <span id="gameCount" class="navbar-text me-3">
+                    0 Games
+                </span>
+                <button class="btn btn-sm btn-light justify-self-end" id="theme-changer" type="button" title="Change Theme">
+                    <i class="bi bi-sun-fill"></i>
+                </button>
+            </div>
         </div>
     </nav>
 
     <!-- Content below the top bar -->
     <div class="container mt-4">
         <!-- Game Entry Section -->
-        <div id="newGameEntry" class="game-entry">
-            <h3>Add New Game</h3>
-            <form id="gameForm" class="form-inline">
-                <div class="form-group mr-2">
-                    <label for="gameName" class="mr-2">Game Name:</label>
-                    <input type="text" class="form-control" id="gameName" required>
-                </div>
-                <div class="form-group mr-2">
-                    <label for="gameURL" class="mr-2">Game URL:</label>
-                    <input type="url" class="form-control" id="gameURL" required>
-                </div>
-                <div class="form-group">
-                    <label for="gameComments" class="mr-2">Comments:</label>
-                    <textarea class="form-control" id="gameComments"></textarea>
-                </div>
-                <button type="submit" class="btn btn-primary ml-2">Add Game</button>
-            </form>
+        <div id="newGameEntry" class="card">
+            <div class="card-body">
+                <h5 class="card-title">Add New Game</h5>
+                <form id="gameForm" class="form-inline">
+                    <div class="mb-3 me-2">
+                        <label for="gameName" class="me-2">Game Name:</label>
+                        <input type="text" class="form-control" id="gameName" required>
+                    </div>
+                    <div class="mb-3 me-2">
+                        <label for="gameURL" class="me-2">Game URL:</label>
+                        <input type="url" class="form-control" id="gameURL" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="gameComments" class="me-2">Comments:</label>
+                        <textarea class="form-control" id="gameComments"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary ms-2">Add Game</button>
+                </form>
+            </div>
         </div>
 
         <!-- Database Table -->
         <div id="database" class="mt-4">
-            <table id="gameTable" class="display">
+            <table id="gameTable" class="table table-striped table-bordered">
                 <thead>
                     <tr>
                         <th>Game Name</th>
                         <th>URL</th>
                         <th>Comments</th>
-                        <th>Status</th>
-                        <th>Action</th>
+                        <th data-orderable="false">Status</th>
+                        <th data-orderable="false">Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -89,6 +85,17 @@
         </div>
     </div>
 
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.min.js" integrity="sha512-3dZ9wIrMMij8rOH7X3kLfXAzwtcHpuYpEgQg1OA4QAob1e81H8ntUQmQm3pBudqIoySO5j0tHN4ENzA6+n2r4w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- DataTables JS -->
+    <script type="text/javascript" src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.13.5/js/dataTables.bootstrap5.min.js"></script>
+    <!-- Firebase App (the core Firebase SDK) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <!-- Firestore (Firebase database) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
     <script>
         // Firebase configuration
 		const firebaseConfig = {
@@ -109,10 +116,35 @@
         const gameURL = document.getElementById("gameURL");
         const gameComments = document.getElementById("gameComments");
         const gameCount = document.getElementById("gameCount");
-        const gameTableBody = document.getElementById("gameTable").getElementsByTagName("tbody")[0];
+        const gameTable = document.getElementById("gameTable");
 
-        // Initialize the DataTable and set default visible entries to 50
+        // Calling jQuery ready event, for further calls inside it
         $(document).ready(function() {
+            // Instantiate the theme changer button behavior
+            $('#theme-changer').on('click.changeTheme', function(event, wasTriggered) {
+                const $button = $(this);
+                const $iIcon = $button.children('i.bi');
+                const $html = $('html');
+
+                let theme = '';
+                if (wasTriggered) {
+                    theme = localStorage.getItem('theme') ?? 'light';
+                } else {
+                    theme = ($button.hasClass('btn-light')) ? ('dark') : ('light');
+                }
+
+                if (theme == 'dark') {
+                    $button.removeClass('btn-light').addClass('btn-dark');
+                    $iIcon.removeClass('bi-sun-fill').addClass('bi-moon-stars-fill');
+                } else {
+                    $button.removeClass('btn-dark').addClass('btn-light');
+                    $iIcon.removeClass('bi-moon-stars-fill').addClass('bi-sun-fill');
+                }
+                $html.attr('data-bs-theme', theme);
+                localStorage.setItem('theme', theme);
+            }).trigger('click.changeTheme', true);
+
+            // Initialize the DataTable and set default visible entries to 50
             $('#gameTable').DataTable({
                 pageLength: 50
             });
@@ -132,20 +164,15 @@
         }
 
         function populateGameTable(games) {
-            games.forEach(game => {
-                let row = gameTableBody.insertRow();
-                let nameCell = row.insertCell(0);
-                let urlCell = row.insertCell(1);
-                let commentCell = row.insertCell(2);
-                let statusCell = row.insertCell(3);
-                let actionCell = row.insertCell(4);
+            var table = $(gameTable).DataTable();
 
-                nameCell.textContent = game.name;
-                urlCell.textContent = game.url;
-                commentCell.contentEditable = "true";
-                commentCell.textContent = game.comment;
+            // Clearing table, before populating it through jQuery DataTables API.
+            table.clear().draw();
+
+            games.forEach(game => {
                 // Dropdown for status
                 let dropdown = document.createElement("select");
+                dropdown.classList.add('form-select', 'form-select-sm');
                 ["Done", "WIP", "Missing Requirements"].forEach(status => {
                     let option = document.createElement("option");
                     option.value = status;
@@ -155,22 +182,32 @@
                     }
                     dropdown.appendChild(option);
                 });
-                statusCell.appendChild(dropdown);
+                
                 // Delete button
                 let deleteButton = document.createElement("button");
+                deleteButton.classList.add('btn', 'btn-danger', 'btn-sm');
                 deleteButton.textContent = "Delete";
                 deleteButton.onclick = function() {
                     deleteGame(game.id, row);
                 };
-                actionCell.appendChild(deleteButton);
 
-                gameCount.textContent = `${games.length} Games`;
+                // Adding table row through jQuery DataTables API.
+                var comment = game.comment ?? game.comments;
+                var rowNode = table.row.add([game.name, game.url, comment, dropdown.outerHTML, deleteButton.outerHTML]).draw().node();
+
+                // Allowing for the Comments column (third one) to be editable.
+                $(rowNode).children('td').eq(2).attr('contenteditable', 'true');
             });
+
+            gameCount.textContent = `${games.length} Games`;
         }
 
         function deleteGame(id, row) {
+            var table = $(gameTable).DataTable();
+
             db.collection("games").doc(id).delete().then(() => {
-                gameTableBody.deleteRow(row.rowIndex - 1);
+                // Deleting table row through jQuery DataTables API.
+                table.row(row.rowIndex - 1).remove().draw(false);
             });
         }
 
