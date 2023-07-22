@@ -15,7 +15,7 @@
 
 <body>
     <!-- Top bar -->
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
 
         <div class="container-fluid">
             <a class="navbar-brand" href="#">PortMaster Database</a>
@@ -43,26 +43,30 @@
     </nav>
 
     <!-- Content below the top bar -->
-    <div class="container mt-4">
+    <div class="container-fluid mt-4">
         <!-- Game Entry Section -->
-        <div id="newGameEntry" class="card">
-            <div class="card-body">
-                <h5 class="card-title">Add New Game</h5>
-                <form id="gameForm" class="form-inline">
-                    <div class="mb-3 me-2">
-                        <label for="gameName" class="me-2">Game Name:</label>
-                        <input type="text" class="form-control" id="gameName" required>
+        <div class="row">
+            <div class="col-12 col-md-6 offset-md-3">
+                <div id="newGameEntry" class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Add New Game</h5>
+                        <form id="gameForm" class="form-inline">
+                            <div class="mb-3 me-2">
+                                <label for="gameName" class="me-2">Game Name:</label>
+                                <input type="text" class="form-control" id="gameName" required>
+                            </div>
+                            <div class="mb-3 me-2">
+                                <label for="gameURL" class="me-2">Game URL:</label>
+                                <input type="url" class="form-control" id="gameURL" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="gameComments" class="me-2">Comments:</label>
+                                <textarea class="form-control" id="gameComments"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary ms-2">Add Game</button>
+                        </form>
                     </div>
-                    <div class="mb-3 me-2">
-                        <label for="gameURL" class="me-2">Game URL:</label>
-                        <input type="url" class="form-control" id="gameURL" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="gameComments" class="me-2">Comments:</label>
-                        <textarea class="form-control" id="gameComments"></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary ms-2">Add Game</button>
-                </form>
+                </div>
             </div>
         </div>
 
@@ -72,7 +76,6 @@
                 <thead>
                     <tr>
                         <th>Game Name</th>
-                        <th>URL</th>
                         <th>Comments</th>
                         <th data-orderable="false">Status</th>
                         <th data-orderable="false">Action</th>
@@ -146,7 +149,14 @@
 
             // Initialize the DataTable and set default visible entries to 50
             $('#gameTable').DataTable({
-                pageLength: 50
+                pageLength: 50,
+                autoWidth: false,
+                columns: [
+                    { "width": '30%' },
+                    { "width": '50%' },
+                    { "width": '10%' },
+                    { "width": '10%' },
+                ],
             });
         });
 
@@ -170,44 +180,53 @@
             table.clear().draw();
 
             games.forEach(game => {
+                // Game name, also containing its URL as a link.
+                let $gameNameDiv = $("<div />").html(
+                    $('<a />').attr('href', game.url).html(game.name)
+                );
+
+                let comment = game.comment ?? game.comments;
+
                 // Dropdown for status
-                let dropdown = document.createElement("select");
-                dropdown.classList.add('form-select', 'form-select-sm');
+                let $dropdown = $('<select />').addClass('form-select form-select-sm');
                 ["Done", "WIP", "Missing Requirements"].forEach(status => {
-                    let option = document.createElement("option");
-                    option.value = status;
-                    option.textContent = status;
+                    let $option = $('<option />').attr( 'value', status).html(status);
                     if (status === game.status) {
-                        option.selected = true;
+                        $option.prop('selected', true);
                     }
-                    dropdown.appendChild(option);
+                    $option.appendTo($dropdown);
                 });
                 
                 // Delete button
-                let deleteButton = document.createElement("button");
-                deleteButton.classList.add('btn', 'btn-danger', 'btn-sm');
-                deleteButton.textContent = "Delete";
-                deleteButton.onclick = function() {
-                    deleteGame(game.id, row);
-                };
+                let $deleteButton = $('<button />').addClass('btn btn-danger btn-sm delete').html('Delete');
 
                 // Adding table row through jQuery DataTables API.
-                var comment = game.comment ?? game.comments;
-                var rowNode = table.row.add([game.name, game.url, comment, dropdown.outerHTML, deleteButton.outerHTML]).draw().node();
+                var rowNode = table.row.add([
+                    $gameNameDiv[0].outerHTML,
+                    comment,
+                    $dropdown[0].outerHTML,
+                    $deleteButton[0].outerHTML,
+                ]).draw().node();
 
                 // Allowing for the Comments column (third one) to be editable.
-                $(rowNode).children('td').eq(2).attr('contenteditable', 'true');
+                $(rowNode).children('td').eq(1).attr('contenteditable', 'true');
+
+                // Adding onclick event to the Delete button.
+                $(rowNode).find('button.delete').on('click', function() {
+                    const rowNumber = $(rowNode).index();
+                    deleteGame(game.id, rowNumber);
+                });
             });
 
             gameCount.textContent = `${games.length} Games`;
         }
 
-        function deleteGame(id, row) {
+        function deleteGame(id, rowNumber) {
             var table = $(gameTable).DataTable();
 
             db.collection("games").doc(id).delete().then(() => {
                 // Deleting table row through jQuery DataTables API.
-                table.row(row.rowIndex - 1).remove().draw(false);
+                table.row(rowNumber).remove().draw(false);
             });
         }
 
