@@ -66,7 +66,7 @@
   </div>
 
   <!-- To-dos View -->
-  <div id="todo-view">
+  <div id="entry-vew">
     <div id="username"></div>
     <input type="button" value="Logout" id="logout-button">
     <div id="logout-error"></div>
@@ -137,7 +137,7 @@
       </form>
   </div>
 
-
+<!--
     <h1>To-Do List (Delete Me)</h1>
     <div id="todos"></div>
     <div id="db-loading">Loading to-dos...</div>
@@ -149,6 +149,7 @@
     </form>
     <div id="add-todo-error"></div>
   </div>
+-->
 
 
 
@@ -189,7 +190,7 @@
 
     function showTodos(user) {
       document.getElementById('auth-view').style.display = 'none'
-      document.getElementById('todo-view').style.display = 'block'
+      document.getElementById('entry-vew').style.display = 'block'
 
       // reset the todos view
       document.getElementById('username').innerHTML = user.username
@@ -202,7 +203,7 @@
     // }
 
     function showAuth() {
-      document.getElementById('todo-view').style.display = 'none'
+      document.getElementById('entry-vew').style.display = 'none'
       document.getElementById('auth-view').style.display = 'block'
       document.getElementById('login-username').value = ''
       document.getElementById('login-password').value = ''
@@ -263,19 +264,18 @@
     //     }
     //   }
     // }
+    // function addTodoHandler(e) {
+    //   e.preventDefault()
 
-    function addTodoHandler(e) {
-      e.preventDefault()
-
-      const todo = document.getElementById('add-todo').value
-    }
+    //   const todo = document.getElementById('add-todo').value
+    // }
 
     document.getElementById('login-form').addEventListener('submit', handleLogin)
     document.getElementById('signup-form').addEventListener('submit', handleSignUp)
     // document.getElementById('add-todo-form').addEventListener('submit', addTodoHandler)
     document.getElementById('logout-button').addEventListener('click', handleLogout)
     
-    document.getElementById('todo-view').style.display = 'none'
+    document.getElementById('entry-vew').style.display = 'none'
     document.getElementById('auth-view').style.display = 'none'
 
   </script>
