@@ -44,13 +44,13 @@ $formCreateGame.on('submit', function(e) {
             }
             
             // If reached here, proceed with game record creation.
-            hideLoadingIndicatorModal();
             db.collection("games").add(gameData).then(() => {
                 // Clearing form fields
                 $inputGameName.add($inputGameUrl).add($textareaGameComments).val('');
 
-                // Refetch games after adding to display the latest data
+                hideLoadingIndicatorModal();
                 fetchGames();
+                showAlertModal('Game created successfully.');
             });
         });
     });
