@@ -4,7 +4,7 @@ let $processingModal = null;
 // Functions.
 function getFirebaseCredentials() {
     let request = new XMLHttpRequest();
-    request.open("GET", "../firebase-credentials.json", false);
+    request.open("GET", "firebase-credentials.json", false);
     request.send(null);
     return JSON.parse(request.responseText);
 }
