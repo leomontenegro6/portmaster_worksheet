@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,120 +10,291 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <!-- DataTables CSS -->
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.5/css/dataTables.bootstrap5.min.css">
+    <!-- Userbase AUTH -->
+    <script type="text/javascript" src="https://sdk.userbase.com/2/userbase.js"></script>
 </head>
 
 <body>
-    <!-- Top bar -->
-    <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
-
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">PortMaster Database</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
+   <!-- Top bar -->
+   <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">PortMaster Database</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="#newGameEntry">New Game Entry</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#database">Database</a>
+                </li>
+            </ul>
+            <span id="gameCount" class="navbar-text me-3">
+                0 Games
+            </span>
+            <button class="btn btn-sm btn-light justify-self-end" id="theme-changer" type="button" title="Change Theme">
+                <i class="bi bi-sun-fill"></i>
             </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#newGameEntry">New Game Entry</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#database">Database</a>
-                    </li>
-                </ul>
-                <span id="gameCount" class="navbar-text me-3">
-                    0 Games
-                </span>
-                <button class="btn btn-sm btn-light justify-self-end" id="theme-changer" type="button" title="Change Theme">
-                    <i class="bi bi-sun-fill"></i>
-                </button>
-            </div>
         </div>
-    </nav>
+    </div>
+</nav>
+    
+
+  <!-- Loading View -->
+  <div id="loading-view">Loading...</div>
+
+  <!-- Auth View -->
+  <div id="auth-view">
+    <h1>Login</h1>
+    <form id="login-form">
+      <input id="login-username" type="text" required placeholder="Username">
+      <input id="login-password" type="password" required placeholder="Password">
+      <input type="submit" value="Sign in">
+    </form>
+    <div id="login-error"></div>
+
+    <h1>Create an account</h1>
+    <form id="signup-form">
+      <input id="signup-username" type="text" required placeholder="Username">
+      <input id="signup-password" type="password" required placeholder="Password">
+      <input type="submit" value="Create an account">
+    </form>
+    <div id="signup-error"></div>
+  </div>
+
+  <!-- To-dos View -->
+  <div id="entry-vew">
+    <div id="username"></div>
+    <input type="button" value="Logout" id="logout-button">
+    <div id="logout-error"></div>
 
     <!-- Content below the top bar -->
     <div class="container-fluid mt-4">
-        <!-- Game Entry Section -->
-        <div class="row">
-            <div class="col-12 col-md-6 offset-md-3">
-                <div id="newGameEntry" class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Add New Game</h5>
-                        <form id="gameForm" class="form-inline">
-                            <div class="mb-3 me-2">
-                                <label for="gameName" class="me-2">Game Name:</label>
-                                <input type="text" class="form-control" id="gameName" required>
-                            </div>
-                            <div class="mb-3 me-2">
-                                <label for="gameURL" class="me-2">Game URL:</label>
-                                <input type="url" class="form-control" id="gameURL" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="gameComments" class="me-2">Comments:</label>
-                                <textarea class="form-control" id="gameComments"></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-primary ms-2">Add Game</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
+      <!-- Game Entry Section -->
+      <div class="row">
+          <div class="col-12 col-md-6 offset-md-3">
+              <div id="newGameEntry" class="card">
+                  <div class="card-body">
+                      <h5 class="card-title">Add New Game</h5>
+                      <form id="gameForm" class="form-inline">
+                          <div class="mb-3 me-2">
+                              <label for="gameName" class="me-2">Game Name:</label>
+                              <input type="text" class="form-control" id="gameName" required>
+                          </div>
+                          <div class="mb-3 me-2">
+                              <label for="gameURL" class="me-2">Game URL:</label>
+                              <input type="url" class="form-control" id="gameURL" required>
+                          </div>
+                          <div class="mb-3">
+                              <label for="gameComments" class="me-2">Comments:</label>
+                              <textarea class="form-control" id="gameComments"></textarea>
+                          </div>
+                          <button type="submit" class="btn btn-primary ms-2">Add Game</button>
+                      </form>
+                  </div>
+              </div>
+          </div>
+      </div>
 
-        <!-- Database Table -->
-        <div id="database" class="mt-4">
-            <table id="gameTable" class="table table-striped table-bordered">
-                <thead>
-                    <tr>
-                        <th>Game Name</th>
-                        <th>Comments</th>
-                        <th>Status</th>
-                        <th data-orderable="false">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Game data from Firebase will be populated here -->
-                </tbody>
-            </table>
-        </div>
+      <!-- Database Table -->
+      <div id="database" class="mt-4">
+          <table id="gameTable" class="table table-striped table-bordered">
+              <thead>
+                  <tr>
+                      <th>Game Name</th>
+                      <th>Comments</th>
+                      <th>Status</th>
+                      <th data-orderable="false">Actions</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <!-- Game data from Firebase will be populated here -->
+              </tbody>
+          </table>
+      </div>
 
-        <!-- Form edit template -->
-        <form id="form-edit-template" class="form-inline d-none">
-            <div class="mb-3">
-                <label class="me-2">Game Name:</label>
-                <div class="show-game-name">---</div>
-            </div>
-            <div class="mb-3">
-                <label for="editGameComments" class="me-2">Comments:</label>
-                <textarea class="form-control edit-game-comments"></textarea>
-            </div>
-            <div class="mb-3">
-                <label for="editGameStatus" class="me-2">Status:</label>
-                <select class="form-select edit-game-status">
-                    <option value="Done">Done</option>
-                    <option value="WIP">WIP</option>
-                    <option value="Missing Requirements">Missing Requirements</option>
-                </select>
-            </div>
-        </form>
-    </div>
+      <!-- Form edit template -->
+      <form id="form-edit-template" class="form-inline d-none">
+          <div class="mb-3">
+              <label class="me-2">Game Name:</label>
+              <div class="show-game-name">---</div>
+          </div>
+          <div class="mb-3">
+              <label for="editGameComments" class="me-2">Comments:</label>
+              <textarea class="form-control edit-game-comments"></textarea>
+          </div>
+          <div class="mb-3">
+              <label for="editGameStatus" class="me-2">Status:</label>
+              <select class="form-select edit-game-status">
+                  <option value="Done">Done</option>
+                  <option value="WIP">WIP</option>
+                  <option value="Missing Requirements">Missing Requirements</option>
+              </select>
+          </div>
+      </form>
+  </div>
 
-    <!-- jQuery library -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <!-- Bootstrap JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.min.js" integrity="sha512-3dZ9wIrMMij8rOH7X3kLfXAzwtcHpuYpEgQg1OA4QAob1e81H8ntUQmQm3pBudqIoySO5j0tHN4ENzA6+n2r4w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <!-- DataTables JS -->
-    <script type="text/javascript" src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/1.13.5/js/dataTables.bootstrap5.min.js"></script>
-    <!-- Bootbox.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/6.0.0/bootbox.min.js" integrity="sha512-oVbWSv2O4y1UzvExJMHaHcaib4wsBMS5tEP3/YkMP6GmkwRJAa79Jwsv+Y/w7w2Vb/98/Xhvck10LyJweB8Jsw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <!-- Firebase App (the core Firebase SDK) -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <!-- Firestore (Firebase database) -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-    <!-- Our custom JS code -->
-    <script src="js/functions.js"></script>
-    <script src="js/js.js"></script>
+<!--
+    <h1>To-Do List (Delete Me)</h1>
+    <div id="todos"></div>
+    <div id="db-loading">Loading to-dos...</div>
+    <div id="db-error"></div>
 
+    <form id="add-todo-form">
+      <input id="add-todo" type="text" required placeholder="To-Do">
+      <input type="submit" value="Add">
+    </form>
+    <div id="add-todo-error"></div>
+  </div>
+-->
+
+
+
+  <!-- application code -->
+  <script type="text/javascript">
+    userbase.init({ appId: 'a388dcbf-6ac1-4c1d-9ed0-db8f6d3bfae8' })
+      .then((session) => session.user ? showTodos(session.user) : showAuth())
+      .catch(() => showAuth())
+      .finally(() => document.getElementById('loading-view').style.display = 'none')
+
+    function handleLogin(e) {
+      e.preventDefault()
+
+      const username = document.getElementById('login-username').value
+      const password = document.getElementById('login-password').value
+
+      userbase.signIn({ username, password, rememberMe: 'local' })
+        .then((user) => showTodos(user))
+        .catch((e) => document.getElementById('login-error').innerHTML = e)
+    }
+
+    function handleSignUp(e) {
+      e.preventDefault()
+
+      const username = document.getElementById('signup-username').value
+      const password = document.getElementById('signup-password').value
+
+      userbase.signUp({ username, password, rememberMe: 'local' })
+        .then((user) => showTodos(user))
+        .catch((e) => document.getElementById('signup-error').innerHTML = e)
+    }
+
+    function handleLogout() {
+      userbase.signOut()
+        .then(() => showAuth())
+        .catch((e) => document.getElementById('logout-error').innerText = e)
+    }
+
+    function showTodos(user) {
+      document.getElementById('auth-view').style.display = 'none'
+      document.getElementById('entry-vew').style.display = 'block'
+
+      // reset the todos view
+      document.getElementById('username').innerHTML = user.username
+      document.getElementById('todos').innerText = ''
+      // document.getElementById('db-loading').style.display = 'block'
+      // document.getElementById('db-error').innerText = ''
+
+    //   userbase.openDatabase({ databaseName: 'todos', changeHandler })
+    //     .catch((e) => document.getElementById('db-error').innerText = e)
+    // }
+    }
+
+    function showAuth() {
+      document.getElementById('entry-vew').style.display = 'none'
+      document.getElementById('auth-view').style.display = 'block'
+      document.getElementById('login-username').value = ''
+      document.getElementById('login-password').value = ''
+      document.getElementById('login-error').innerText = ''
+      document.getElementById('signup-username').value = ''
+      document.getElementById('signup-password').value = ''
+      document.getElementById('signup-error').innerText = ''
+    }
+
+    // function changeHandler(items) {
+    //   document.getElementById('db-loading').style.display = 'none'
+
+    //   const todosList = document.getElementById('todos')
+
+    //   if (items.length === 0) {
+    //     todosList.innerText = 'Empty'
+    //   } else {
+    //     // clear the list
+    //     todosList.innerHTML = ''
+
+    //     // render all the to-do items
+    //     for (let i = 0; i < items.length; i++) {
+
+    //       // build the todo delete button
+    //       const todoDelete = document.createElement('button')
+    //       todoDelete.innerHTML = 'X'
+    //       todoDelete.style.display = 'inline-block'
+    //       todoDelete.onclick = () => {
+    //         userbase.deleteItem({ databaseName: 'todos', itemId: items[i].itemId })
+    //           .catch((e) => document.getElementById('add-todo-error').innerHTML = e)
+    //       }
+
+    //       // build the todo checkbox
+    //       const todoBox = document.createElement('input')
+    //       todoBox.type = 'checkbox'
+    //       todoBox.id = items[i].itemId
+    //       todoBox.checked = items[i].item.complete ? true : false
+    //       todoBox.onclick = (e) => {
+    //         e.preventDefault()
+    //         userbase.updateItem({ databaseName: 'todos', itemId: items[i].itemId, item: {
+    //           'todo': items[i].item.todo,
+    //           'complete': !items[i].item.complete
+    //         }})
+    //         .catch((e) => document.getElementById('add-todo-error').innerHTML = e)
+    //       }
+
+    //       // build the todo label
+    //       const todoLabel = document.createElement('label')
+    //       todoLabel.innerHTML = items[i].item.todo
+    //       todoLabel.style.textDecoration = items[i].item.complete ? 'line-through' : 'none'
+
+    //       // append the todo item to the list
+    //       const todoItem = document.createElement('div')
+    //       todoItem.appendChild(todoDelete)
+    //       todoItem.appendChild(todoBox)
+    //       todoItem.appendChild(todoLabel)
+    //       todosList.appendChild(todoItem)
+    //     }
+    //   }
+    // }
+    // function addTodoHandler(e) {
+    //   e.preventDefault()
+
+    //   const todo = document.getElementById('add-todo').value
+    // }
+
+    document.getElementById('login-form').addEventListener('submit', handleLogin)
+    document.getElementById('signup-form').addEventListener('submit', handleSignUp)
+    // document.getElementById('add-todo-form').addEventListener('submit', addTodoHandler)
+    document.getElementById('logout-button').addEventListener('click', handleLogout)
+    
+    document.getElementById('entry-vew').style.display = 'none'
+    document.getElementById('auth-view').style.display = 'none'
+
+  </script>
+  <!-- jQuery library -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <!-- Bootstrap JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.min.js" integrity="sha512-3dZ9wIrMMij8rOH7X3kLfXAzwtcHpuYpEgQg1OA4QAob1e81H8ntUQmQm3pBudqIoySO5j0tHN4ENzA6+n2r4w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <!-- DataTables JS -->
+  <script type="text/javascript" src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+  <script type="text/javascript" src="https://cdn.datatables.net/1.13.5/js/dataTables.bootstrap5.min.js"></script>
+  <!-- Bootbox.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/6.0.0/bootbox.min.js" integrity="sha512-oVbWSv2O4y1UzvExJMHaHcaib4wsBMS5tEP3/YkMP6GmkwRJAa79Jwsv+Y/w7w2Vb/98/Xhvck10LyJweB8Jsw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <!-- Firebase App (the core Firebase SDK) -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <!-- Firestore (Firebase database) -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  <!-- Our custom JS code -->
+  <script src="js/functions.js"></script>
+  <script src="js/js.js"></script>
 </body>
-
 </html>
