@@ -47,7 +47,7 @@ function populateGameTable(games) {
         );
 
         let comment = game.comment ?? game.comments;
-        let status = game.status ?? 'Done';
+        let status = game.status ?? 'Open';
 
         // Edit and delete buttons.
         let $divActions = $('<div />').addClass('btn-group btn-group-sm').attr('role', 'group').append(
