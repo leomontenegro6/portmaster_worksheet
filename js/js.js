@@ -11,7 +11,7 @@ const $formCreateGame = $('#gameForm');
 const $inputGameName = $('#gameName');
 const $inputGameUrl = $('#gameURL');
 const $textareaGameComments = $('#gameComments');
-const $spanGameCount = $('#gameCount');
+const $inputTags = $('#gameTags');
 const $tableGame = $('#gameTable');
 
 // Event for creating game records in the database.
@@ -22,6 +22,7 @@ $formCreateGame.on('submit', function(e) {
         name: $inputGameName.val(),
         url: $inputGameUrl.val(),
         comment: $textareaGameComments.val(),
+        tags: $inputTags.val().split(',')
     };
 
     showLoadingIndicatorModal();
@@ -46,7 +47,7 @@ $formCreateGame.on('submit', function(e) {
             // If reached here, proceed with game record creation.
             db.collection("games").add(gameData).then(() => {
                 // Clearing form fields
-                $inputGameName.add($inputGameUrl).add($textareaGameComments).val('');
+                $inputGameName.add($inputGameUrl).add($textareaGameComments).add($inputTags).val('');
 
                 hideLoadingIndicatorModal();
                 fetchGames();
@@ -80,13 +81,17 @@ $buttonThemeChanger.on('click.changeTheme', function(event, wasTriggered) {
     localStorage.setItem('theme', theme);
 }).trigger('click.changeTheme', true);
 
+// Instantiate Tagify component
+instantiateTaggifyComponent($inputTags[0]);
+
 // Initialize the DataTable.
 $tableGame.DataTable({
     pageLength: 50,
     autoWidth: false,
     columns: [
-        { "width": '35%' },
+        { "width": '20%' },
         { "width": '50%' },
+        { "width": '15%' },
         { "width": '10%' },
         { "width": '5%' },
     ],
